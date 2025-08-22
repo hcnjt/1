@@ -1,0 +1,185 @@
+-- 加载OrionLib库
+local OrionLib
+local success, err = pcall(function()
+    OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/HXB20111/roblox-/refs/heads/main/%E9%BB%84%E8%84%9A%E6%9C%ACUI.lua"))()
+end)
+if not success or not OrionLib then
+    warn("Orion库加载失败: " .. (err or "未知错误"))
+    return
+end
+-- 新黄名单系统配置
+local StarterGui = game:GetService("StarterGui")
+local Players = game:GetService("Players")
+local WhitelistedPlayers = {
+    ["FengY3"] = true,
+    ["cn_bxf01"] = true,
+    ["aaaadjdat"] = true,
+    ["11451yuh"] = true,
+    ["yesnopvp5"] = true,
+    ["lzq261"] = true,
+    ["HXB201111"] = true,
+    ["123qwf658"] = true,
+    ["zaqxswedc71"] = true,
+    ["HPCEIAILUODIN"] = true,
+    ["qwaszx123667"] = true,
+    ["123456789wc91"] = true,
+    ["SYTAAYY9178"] = true,
+    ["wec524"] = true,
+    ["sjjsensnje"] = true,
+    ["years453"] = true,
+    ["qaz123456789qazjk"] = true,
+    ["91VIP11451411"] = true,
+    ["Kicking881"] = true,
+    ["131xne"] = true,
+    ["KSTWGF_1"] = true,
+    ["w64015"] = true,
+    ["BRDDAAC"] = true,
+    ["ggshsgg17"] = true,
+    ["3166cs"] = true,
+    ["sjwuxnshi"] = true,
+    ["QLI_183a"] = true,
+    ["Geburah_1"] = true,
+    ["78917891wc"] = true,
+    ["asxxxiod"] = true,
+    ["jioeud52"] = true,
+    ["zhb1523"] = true,
+    ["poiuytr10993"] = true,
+    ["789113t"] = true,
+    ["qvgg2"] = true,
+    ["aodiA62"] = true,
+    ["dddd363636"] = true,
+    ["wujie997"] = true,
+    ["Jemiloft"] = true,
+    ["ftft_425"] = true,
+    ["cn_54sB666"] = true,
+    ["djubddxhdn"] = true,
+    ["Yungengxin"] = true,
+    ["qaz123456789qazjj"] = true,
+    ["XiaoAn35"] = true,
+    ["plmnb3697"] = true,
+    ["HXB20111"] = true,
+    ["bgm9178"] = true,
+    ["fair_jiba"] = true,
+    ["kkobs3"] = true,
+    ["HGLHeLHGL"] = true,
+    ["Kdksjkdo"] = true,
+    ["AIPOPSCAT"] = true,
+    ["hwjwjaaj1818"] = true,
+    ["xgcjayzbfajgcjh"] = true,
+    ["AK74N_5"] = true,
+    ["sjhsnus"] = true,
+    ["Zero"] = true,
+    ["LuChuan7878"] = true,
+    ["fyfindskfj"] = true,
+    ["XM_HHM5201314"] = true,
+    ["haofengyyds"] = true,
+    ["guwei88"] = true,
+    ["clone58698"] = true,
+    ["tzx10998"] = true,
+    ["zzxkuyz"] = true,
+    ["123"] = true,
+}
+
+-- 黄名单检查函数
+local function IsWhitelisted(player)
+    return WhitelistedPlayers[player.Name] or false
+end
+
+-- 本地玩家验证
+local localPlayer = Players.LocalPlayer
+local isLocalPlayerWhitelisted = IsWhitelisted(localPlayer)
+
+-- 黄名单验证结果处理
+if isLocalPlayerWhitelisted then
+    pcall(function()  -- 包裹SetCore调用，避免因游戏限制导致报错
+        StarterGui:SetCore("SendNotification", {
+            Title = "黄名单认证",
+            Text = "玩家:" .. localPlayer.Name .. "，检测完毕黄名单玩家，稍后会加载脚本",
+            Duration = 7,
+        })
+    end)
+else
+    localPlayer:Kick("你没有被加入黄名单，请加群1057766561")
+    return  -- 非黄名单玩家直接退出，不加载后续内容
+end
+
+-- 服务与变量初始化
+local Lighting = game:GetService("Lighting")
+local player = localPlayer  -- 已验证的本地玩家
+
+-- 工具函数：创建圆角
+local function makeRound(obj, radius)
+    if obj and obj:IsA("GuiObject") then
+        local corner = Instance.new("UICorner")
+        corner.CornerRadius = radius or UDim.new(0.5, 0)
+        corner.Parent = obj
+    end
+end
+
+-- 创建主窗口
+local Window = OrionLib:MakeWindow({
+    Name = "黄脚本",
+    SaveConfig = true,
+    IntroText = "黄脚本 - 功能加载完成",
+    Theme = "FlatBlue",
+    Icon = "rbxassetid://118894209472715"
+})
+
+-- 欢迎通知
+pcall(function()
+    StarterGui:SetCore("SendNotification", {
+        Title = "黄脚本",
+        Text = "欢迎使用，功能已就绪",
+        Duration = 4,
+        Icon = "rbxassetid://118894209472715"
+    })
+end)
+
+-- 作者信息标签页
+local AuthorTab = Window:MakeTab({Name = "作者信息", Icon = "rbxassetid://4483345998"})
+AuthorTab:AddParagraph("作者", "Hfh916")
+AuthorTab:AddParagraph("作者QQ", "1357377308")
+AuthorTab:AddParagraph("QQ群", "543121803")
+AuthorTab:AddParagraph("帮助者", "风御 X")
+AuthorTab:AddParagraph("帮助者", "真的guiwow")
+
+-- 圆形按钮生成器
+local function addRoundButton(tab, config)
+    local btn = tab:AddButton(config)
+    if btn.Instance and btn.Instance:IsA("GuiButton") then
+        btn.Instance.Size = UDim2.new(0, 120, 0, 36)
+        makeRound(btn.Instance)
+        
+        local hover = Instance.new("UIScale")
+        hover.Scale = 1
+        hover.Parent = btn.Instance
+        
+        local enterConn = btn.Instance.MouseEnter:Connect(function() hover.Scale = 1.05 end)
+        local leaveConn = btn.Instance.MouseLeave:Connect(function() hover.Scale = 1 end)
+        
+        btn.Instance.AncestryChanged:Connect(function(_, parent)
+            if not parent then
+                enterConn:Disconnect()
+                leaveConn:Disconnect()
+            end
+        end)
+    end
+    return btn
+end
+
+-- 作者信息页按钮
+addRoundButton(AuthorTab, {
+    Name = "复制作者QQ",
+    Callback = function()
+        if setclipboard then
+            setclipboard("1357377308")
+            OrionLib:MakeNotification({Name = "成功", Content = "QQ已复制", Time = 2})
+        end
+    end,
+    Color = Color3.fromRGB(70, 130, 255)
+})
+
+addRoundButton(AuthorTab, {
+    Name = "复制QQ群",
+    Callback = function()
+        if setclipboard t
